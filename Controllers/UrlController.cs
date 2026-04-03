@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using UrlShortenerAPI.Model;
 namespace UrlShortenerAPI.Controllers
@@ -33,10 +34,15 @@ namespace UrlShortenerAPI.Controllers
             }
             while (_db.Urls.Any(u => u.ShortCode == code));
 
+            
+
             var entry = new UrlEntry
             {
                 OriginalUrl = request.OriginalUrl,
-                ShortCode = code
+                ShortCode = code,
+                CreatedAt = DateTime.UtcNow
+               
+                
             };
 
             _db.Urls.Add(entry);
@@ -54,7 +60,8 @@ namespace UrlShortenerAPI.Controllers
 
             if (found == null)
                 return NotFound();
-
+            if ((DateTime.UtcNow - found.CreatedAt).TotalHours > 24)
+                return BadRequest("This short link has expired.");
             return Redirect(found.OriginalUrl);
         }
 
@@ -66,5 +73,6 @@ namespace UrlShortenerAPI.Controllers
             return new string(Enumerable.Repeat(chars, length)
                 .Select(s => s[random.Next(s.Length)]).ToArray());
         }
+
     }
 }

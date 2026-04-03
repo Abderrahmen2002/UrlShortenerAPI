@@ -2,13 +2,27 @@ using UrlShortenerAPI;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ✅ Add services
+// 🔥 Add CORS (fixes your frontend error)
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
+
+// Controllers + Db
 builder.Services.AddControllers();
 builder.Services.AddDbContext<AppDbContext>();
 
 var app = builder.Build();
 
-// ✅ Map controllers
+// 🔥 Enable CORS here
+app.UseCors("AllowAll");
+
+// Map controllers
 app.MapControllers();
 
 // Ensure DB

@@ -1,10 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using UrlShortenerAPI.Model;
 namespace UrlShortenerAPI
 {
     public class AppDbContext : DbContext
     {
         public DbSet<UrlEntry> Urls { get; set; } = null!;
-
+        
+        
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseMySql(
